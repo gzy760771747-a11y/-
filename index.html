@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ff4f00" />
+    <link rel="preload" href="poster.webp" as="image" type="image/webp" fetchpriority="high" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23ff4f00'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-family='Arial' font-size='23' font-weight='900'%3EDX%3C/text%3E%3C/svg%3E"
+    />
+    <meta
+      name="description"
+      content="设计师作品集：让灵感形成，让过程被看见，让作品走向下一场想象。"
+    />
+    <title>Portfolio — Design in Motion</title>
+    <style>
+      :root {
+        --ink: #090909;
+        --paper: #f5f3ed;
+        --orange: #ff4f00;
+        --line: rgba(255, 255, 255, 0.32);
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--ink);
+        scrollbar-color: var(--orange) var(--ink);
+      }
+
+      body {
+        margin: 0;
+        color: var(--paper);
+        background: var(--ink);
+        font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+        overflow-x: hidden;
+      }
+
+      button,
+      a {
+        color: inherit;
+        font: inherit;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      .skip-link {
+        position: fixed;
+        z-index: 100;
+        top: 12px;
+        left: 12px;
+        padding: 10px 14px;
+        color: var(--ink);
+        background: var(--paper);
+        transform: translateY(-160%);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .stage {
+        position: fixed;
+        z-index: 0;
+        inset: 0;
+        overflow: hidden;
+        background: #1f322d url("poster.webp") center / cover no-repeat;
+      }
+
+      .video-layer {
+        position: absolute;
+        inset: -3%;
+        width: 106%;
+        height: 106%;
+        object-fit: cover;
+        opacity: 0;
+        filter: saturate(0.86) contrast(1.04);
+        transition: opacity 0.5s ease;
+        will-change: opacity, transform;
+      }
+
+      .video-layer.is-visible {
+        opacity: 1;
+      }
+
+      #introVideo {
+        transform: translate3d(var(--intro-x, 0), var(--intro-y, 0), 0) scale(1.065);
+      }
+
+      .video-grade {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(90deg, rgba(0, 0, 0, 0.6), transparent 34%, transparent 66%, rgba(0, 0, 0, 0.55)),
+          linear-gradient(0deg, rgba(0, 0, 0, 0.56), transparent 34%, rgba(0, 0, 0, 0.18));
+      }
+
+      .grain {
+        position: absolute;
+        inset: 0;
+        opacity: 0.11;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+        mix-blend-mode: soft-light;
+      }
+
+      .chrome {
+        position: fixed;
+        z-index: 20;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 22px clamp(20px, 4vw, 64px);
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 24px;
+        border-bottom: 1px solid var(--line);
+        mix-blend-mode: difference;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        width: max-content;
+        font-size: 14px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        text-transform: uppercase;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        color: var(--ink);
+        background: var(--paper);
+        border-radius: 50%;
+        font-size: 11px;
+        letter-spacing: 0;
+      }
+
+      .chrome-meta {
+        display: flex;
+        gap: 32px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .chrome-cta {
+        justify-self: end;
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        padding: 9px 10px 9px 18px;
+        color: var(--ink);
+        background: var(--paper);
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .chrome-cta span {
+        display: grid;
+        place-items: center;
+        width: 25px;
+        height: 25px;
+        color: var(--paper);
+        background: var(--ink);
+        border-radius: 50%;
+      }
+
+      .copy-layer {
+        position: fixed;
+        z-index: 10;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .intro-copy,
+      .story-copy {
+        position: absolute;
+        inset: 0;
+        padding: clamp(96px, 11vh, 140px) clamp(20px, 4vw, 64px) clamp(42px, 6vh, 76px);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .intro-copy.is-active,
+      .story-copy.is-active {
+        opacity: 1;
+      }
+
+      .intro-copy {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.78fr) 1fr minmax(220px, 0.7fr);
+        grid-template-rows: 1fr auto;
+        align-items: start;
+        gap: 3vw;
+      }
+
+      .display {
+        margin: 0;
+        font-family: Impact, Haettenschweiler, "Arial Narrow", "Noto Sans CJK SC", sans-serif;
+        font-size: clamp(52px, 7.3vw, 128px);
+        font-stretch: condensed;
+        font-weight: 950;
+        line-height: 0.79;
+        letter-spacing: -0.065em;
+        text-transform: uppercase;
+        text-wrap: balance;
+      }
+
+      .display .accent {
+        color: var(--orange);
+      }
+
+      .kicker {
+        margin: 0 0 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .kicker::before {
+        content: "";
+        width: 28px;
+        height: 5px;
+        background: var(--orange);
+      }
+
+      .intro-lead {
+        align-self: end;
+        max-width: 370px;
+      }
+
+      .intro-lead p {
+        margin: 26px 0 0;
+        font-size: clamp(14px, 1.35vw, 19px);
+        font-weight: 700;
+        line-height: 1.55;
+      }
+
+      .intro-stat {
+        justify-self: end;
+        max-width: 300px;
+        text-align: right;
+      }
+
+      .stat-value {
+        margin: 0;
+        font-family: Impact, Haettenschweiler, "Arial Narrow", sans-serif;
+        font-size: clamp(42px, 5vw, 82px);
+        line-height: 0.9;
+        letter-spacing: -0.055em;
+        text-transform: uppercase;
+      }
+
+      .stat-label {
+        margin: 14px 0 0;
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1.6;
+      }
+
+      .intro-foot {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .scroll-hint {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .scroll-hint::before {
+        content: "↓";
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        color: var(--ink);
+        background: var(--orange);
+        border-radius: 50%;
+        animation: nudge 1.5s var(--ease) infinite;
+      }
+
+      @keyframes nudge {
+        50% { transform: translateY(5px); }
+      }
+
+      .mouse-note {
+        margin: 0;
+        max-width: 270px;
+        font-size: 10px;
+        line-height: 1.55;
+        letter-spacing: 0.08em;
+        text-align: right;
+        text-transform: uppercase;
+      }
+
+      .story-copy {
+        display: grid;
+        grid-template-columns: minmax(270px, 0.8fr) 1fr minmax(250px, 0.78fr);
+        align-items: center;
+        gap: 3vw;
+      }
+
+      .story-copy .main-message {
+        grid-column: 1;
+      }
+
+      .story-copy .display {
+        font-size: clamp(58px, 7.4vw, 126px);
+      }
+
+      .story-copy .support {
+        grid-column: 3;
+        align-self: end;
+        padding-bottom: 4vh;
+        text-align: right;
+      }
+
+      .timecode {
+        display: inline-block;
+        margin-bottom: 16px;
+        padding: 6px 9px;
+        color: var(--ink);
+        background: var(--orange);
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+      }
+
+      .emotional-copy {
+        margin: 0;
+        font-family: "Songti SC", SimSun, serif;
+        font-size: clamp(18px, 1.8vw, 27px);
+        font-weight: 700;
+        line-height: 1.45;
+      }
+
+      .descriptor {
+        margin: 18px 0 0;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.6;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .story-two .main-message {
+        grid-column: 3;
+        text-align: right;
+      }
+
+      .story-two .support {
+        grid-column: 1;
+        grid-row: 1;
+        text-align: left;
+      }
+
+      .story-three {
+        grid-template-columns: 1fr 1fr;
+        align-items: end;
+      }
+
+      .story-three .main-message {
+        grid-column: 1 / -1;
+        align-self: center;
+        max-width: 980px;
+      }
+
+      .story-three .support {
+        grid-column: 2;
+        text-align: right;
+      }
+
+      .story-three .display {
+        font-size: clamp(68px, 10vw, 166px);
+      }
+
+      .progress-ui {
+        position: fixed;
+        z-index: 21;
+        right: clamp(14px, 2vw, 32px);
+        top: 50%;
+        width: 2px;
+        height: 25vh;
+        background: rgba(255, 255, 255, 0.28);
+        transform: translateY(-50%);
+      }
+
+      .progress-fill {
+        position: absolute;
+        inset: 0;
+        background: var(--orange);
+        transform: scaleY(var(--progress, 0));
+        transform-origin: top;
+      }
+
+      .progress-number {
+        position: absolute;
+        right: 10px;
+        bottom: -24px;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+      }
+
+      .loading {
+        position: fixed;
+        z-index: 50;
+        left: clamp(20px, 4vw, 64px);
+        bottom: clamp(20px, 4vh, 42px);
+        padding: 12px 14px;
+        color: var(--paper);
+        background: rgba(9, 9, 9, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        backdrop-filter: blur(10px);
+        pointer-events: none;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+      }
+
+      .loading.is-done {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .loading-inner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .loading-title {
+        margin: 0;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .loading-track {
+        width: 76px;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+      }
+
+      .loading-bar {
+        width: 45%;
+        height: 100%;
+        background: var(--orange);
+        animation: loading 1s ease-in-out infinite alternate;
+      }
+
+      @keyframes loading {
+        to { transform: translateX(122%); }
+      }
+
+      .scroll-space {
+        position: relative;
+        z-index: -1;
+        width: 1px;
+        height: 1000vh;
+        pointer-events: none;
+      }
+
+      .fallback {
+        position: fixed;
+        z-index: 60;
+        inset: auto 20px 20px;
+        padding: 12px 16px;
+        color: var(--ink);
+        background: var(--paper);
+        font-size: 12px;
+      }
+
+      @media (max-width: 800px) {
+        .chrome {
+          grid-template-columns: 1fr auto;
+          padding-block: 16px;
+        }
+
+        .chrome-meta {
+          display: none;
+        }
+
+        .chrome-cta {
+          padding-left: 14px;
+        }
+
+        .intro-copy,
+        .story-copy {
+          padding-top: 90px;
+          padding-bottom: max(34px, env(safe-area-inset-bottom));
+        }
+
+        .intro-copy {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 1fr auto;
+        }
+
+        .intro-lead {
+          max-width: 94%;
+        }
+
+        .intro-stat {
+          display: none;
+        }
+
+        .intro-foot {
+          grid-column: 1;
+        }
+
+        .mouse-note {
+          display: none;
+        }
+
+        .display {
+          font-size: clamp(54px, 17vw, 86px);
+        }
+
+        .story-copy,
+        .story-three {
+          grid-template-columns: 1fr;
+          grid-template-rows: 1fr auto;
+          align-items: end;
+        }
+
+        .story-copy .main-message,
+        .story-two .main-message,
+        .story-three .main-message {
+          grid-column: 1;
+          grid-row: 1;
+          align-self: end;
+          text-align: left;
+        }
+
+        .story-copy .display,
+        .story-three .display {
+          font-size: clamp(58px, 18vw, 92px);
+        }
+
+        .story-copy .support,
+        .story-two .support,
+        .story-three .support {
+          grid-column: 1;
+          grid-row: 2;
+          align-self: end;
+          padding-bottom: 0;
+          padding-top: 24px;
+          text-align: left;
+        }
+
+        .emotional-copy {
+          max-width: 340px;
+          font-size: 18px;
+        }
+
+        .progress-ui {
+          right: 10px;
+          height: 18vh;
+        }
+
+        .video-grade {
+          background: linear-gradient(0deg, rgba(0, 0, 0, 0.78), transparent 58%, rgba(0, 0, 0, 0.26));
+        }
+      }
+
+      @media (max-width: 430px) {
+        .chrome-cta {
+          padding: 8px 9px 8px 12px;
+          font-size: 9px;
+        }
+
+        .chrome-cta span {
+          width: 22px;
+          height: 22px;
+        }
+
+        .intro-copy,
+        .story-copy {
+          padding-inline: 18px 30px;
+        }
+
+        .intro-lead p {
+          font-size: 14px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .scroll-hint::before,
+        .loading-bar {
+          animation: none;
+        }
+
+        .video-layer,
+        .intro-copy,
+        .story-copy,
+        .loading {
+          transition-duration: 0.01ms;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#story">跳到故事内容</a>
+
+    <div class="loading" id="loading" role="status" aria-live="polite">
+      <div class="loading-inner">
+        <p class="loading-title">Loading story</p>
+        <div class="loading-track"><div class="loading-bar"></div></div>
+      </div>
+    </div>
+
+    <div class="stage" aria-hidden="true">
+      <video
+        class="video-layer is-visible"
+        id="introVideo"
+        src="public/videos/首屏视频.mp4"
+        data-fallback="intro.web.mp4"
+        poster="poster.webp"
+        fetchpriority="high"
+        autoplay
+        loop
+        muted
+        playsinline
+        webkit-playsinline
+        preload="auto"
+      ></video>
+      <video
+        class="video-layer"
+        id="mainVideo"
+        data-src="main.web.mp4"
+        data-fallback="public/videos/主视频.mp4"
+        muted
+        playsinline
+        webkit-playsinline
+        preload="auto"
+      ></video>
+      <video
+        class="video-layer"
+        id="outroVideo"
+        data-src="outro.web.mp4"
+        data-fallback="public/videos/主视频.mp4"
+        autoplay
+        loop
+        muted
+        playsinline
+        webkit-playsinline
+        preload="auto"
+      ></video>
+      <div class="video-grade"></div>
+      <div class="grain"></div>
+    </div>
+
+    <header class="chrome">
+      <a class="brand" href="#" aria-label="返回开头">
+        <span class="brand-mark">DX</span>
+        <span>Designer.exe</span>
+      </a>
+      <div class="chrome-meta" aria-label="项目类型">
+        <span>Portfolio / 2026</span>
+        <span>Scroll to direct</span>
+      </div>
+      <a class="chrome-cta" href="mailto:hello@example.com">
+        Start a project <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <main class="copy-layer" id="story">
+      <section class="intro-copy is-active" id="introCopy" aria-label="作品集开场">
+        <div class="intro-lead">
+          <p class="kicker">Independent visual designer</p>
+          <h1 class="display">Ideas<br />need<br /><span class="accent">motion.</span></h1>
+          <p>我用清晰的视觉、锋利的叙事和一点不安分的想象，让品牌从人群里站出来。</p>
+        </div>
+        <aside class="intro-stat">
+          <p class="stat-value">Selected<br />works</p>
+          <p class="stat-label">BRAND IDENTITY<br />DIGITAL EXPERIENCE<br />ART DIRECTION</p>
+        </aside>
+        <div class="intro-foot">
+          <div class="scroll-hint">向下滚动，开始导演</div>
+          <p class="mouse-note">移动鼠标探索首屏<br />Scroll controls the main film</p>
+        </div>
+      </section>
+
+      <section class="story-copy story-one" data-start="0" data-end="3.5" aria-hidden="true">
+        <div class="main-message">
+          <p class="kicker">01 / Discover</p>
+          <h2 class="display">Ideas<br />take<br /><span class="accent">form.</span></h2>
+        </div>
+        <div class="support">
+          <span class="timecode">00:00 — 00:03.5</span>
+          <p class="emotional-copy">灵感先于语言，设计让它有了被看见的形状。</p>
+          <p class="descriptor">Curiosity / Direction / Concept</p>
+        </div>
+      </section>
+
+      <section class="story-copy story-two" data-start="3.5" data-end="7.5" aria-hidden="true">
+        <div class="main-message">
+          <p class="kicker">02 / Craft</p>
+          <h2 class="display">Make<br />the signal<br /><span class="accent">clear.</span></h2>
+        </div>
+        <div class="support">
+          <span class="timecode">00:03.5 — 00:07.5</span>
+          <p class="emotional-copy">把每一次推敲，变成品牌与世界相遇的方式。</p>
+          <p class="descriptor">Systems / Details / Decisions</p>
+        </div>
+      </section>
+
+      <section class="story-copy story-three" data-start="7.5" data-end="10.08" aria-hidden="true">
+        <div class="main-message">
+          <p class="kicker">03 / Launch</p>
+          <h2 class="display">Push<br /><span class="accent">what's next.</span></h2>
+        </div>
+        <div class="support">
+          <span class="timecode">00:07.5 — 00:10.08</span>
+          <p class="emotional-copy">作品不是终点，而是下一场想象力的起点。</p>
+          <p class="descriptor">Impact / Momentum / Future</p>
+        </div>
+      </section>
+    </main>
+
+    <aside class="progress-ui" aria-label="视频滚动进度">
+      <div class="progress-fill"></div>
+      <span class="progress-number" id="progressNumber">00</span>
+    </aside>
+
+    <div class="scroll-space" id="scrollSpace" aria-hidden="true"></div>
+
+    <noscript>
+      <p class="fallback">这个滚动叙事页面需要启用 JavaScript 才能同步视频进度。</p>
+    </noscript>
+
+    <script>
+      (() => {
+        "use strict";
+
+        const introVideo = document.querySelector("#introVideo");
+        const mainVideo = document.querySelector("#mainVideo");
+        const outroVideo = document.querySelector("#outroVideo");
+        const introCopy = document.querySelector("#introCopy");
+        const storyCopies = [...document.querySelectorAll(".story-copy")];
+        const scrollSpace = document.querySelector("#scrollSpace");
+        const progressNumber = document.querySelector("#progressNumber");
+        const loading = document.querySelector("#loading");
+
+        const INTRO_CUTOFF = 0.001;
+        const OUTRO_CUTOFF = 0.98;
+        const SEEK_EASE = 0.13;
+        let duration = 10.08;
+        let targetTime = 0;
+        let smoothTime = 0;
+        let progress = 0;
+        let state = "intro";
+        let mouseTargetX = 0;
+        let mouseTargetY = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+        let mainReady = false;
+        let mainRequested = false;
+        let outroRequested = false;
+
+        const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+        function requestMainVideo() {
+          if (mainRequested) return;
+          mainRequested = true;
+          mainVideo.src = mainVideo.dataset.src;
+          mainVideo.load();
+        }
+
+        function requestOutroVideo() {
+          if (outroRequested) return;
+          outroRequested = true;
+          outroVideo.src = outroVideo.dataset.src;
+          outroVideo.load();
+        }
+
+        function setPageHeight() {
+          scrollSpace.style.height = `${duration * 100}vh`;
+        }
+
+        function calculateProgress() {
+          const maxScroll = Math.max(1, scrollSpace.offsetHeight - window.innerHeight);
+          progress = clamp(window.scrollY / maxScroll, 0, 1);
+          targetTime = progress * duration;
+          document.documentElement.style.setProperty("--progress", progress.toFixed(4));
+          progressNumber.textContent = String(Math.round(progress * 100)).padStart(2, "0");
+
+          if (progress > INTRO_CUTOFF) requestMainVideo();
+          if (progress > 0.75) requestOutroVideo();
+
+          const nextState = progress <= INTRO_CUTOFF
+            ? "intro"
+            : progress >= OUTRO_CUTOFF
+              ? "outro"
+              : "main";
+
+          if (nextState !== state) {
+            state = nextState;
+            syncLayers();
+          }
+
+          syncCopy();
+        }
+
+        function syncLayers() {
+          introVideo.classList.toggle("is-visible", state === "intro");
+          mainVideo.classList.toggle("is-visible", state === "main");
+          outroVideo.classList.toggle("is-visible", state === "outro");
+          introCopy.classList.toggle("is-active", state === "intro");
+
+          if (state === "intro") introVideo.play().catch(() => {});
+          else introVideo.pause();
+
+          if (state === "outro") outroVideo.play().catch(() => {});
+          else outroVideo.pause();
+        }
+
+        function syncCopy() {
+          const narrativeTime = targetTime;
+          storyCopies.forEach((copy, index) => {
+            const start = Number(copy.dataset.start);
+            const end = Number(copy.dataset.end);
+            const active = state !== "intro" &&
+              ((narrativeTime >= start && narrativeTime < end) || (state === "outro" && index === 2));
+            copy.classList.toggle("is-active", active);
+            copy.setAttribute("aria-hidden", String(!active));
+          });
+        }
+
+        function render() {
+          smoothTime += (targetTime - smoothTime) * SEEK_EASE;
+          if (Math.abs(targetTime - smoothTime) < 0.002) smoothTime = targetTime;
+
+          if (
+            state === "intro" &&
+            Number.isFinite(introVideo.duration) &&
+            introVideo.currentTime >= introVideo.duration - 0.25
+          ) {
+            introVideo.currentTime = 0;
+            introVideo.play().catch(() => {});
+          }
+
+          if (
+            state === "outro" &&
+            Number.isFinite(outroVideo.duration) &&
+            outroVideo.currentTime >= outroVideo.duration - 0.2
+          ) {
+            outroVideo.currentTime = 0;
+            outroVideo.play().catch(() => {});
+          }
+
+          if (
+            mainReady &&
+            !mainVideo.seeking &&
+            Math.abs(mainVideo.currentTime - smoothTime) > 0.025
+          ) {
+            mainVideo.currentTime = clamp(smoothTime, 0, Math.max(0, duration - 0.02));
+          }
+
+          mouseX += (mouseTargetX - mouseX) * 0.075;
+          mouseY += (mouseTargetY - mouseY) * 0.075;
+          introVideo.style.setProperty("--intro-x", `${mouseX.toFixed(2)}px`);
+          introVideo.style.setProperty("--intro-y", `${mouseY.toFixed(2)}px`);
+          requestAnimationFrame(render);
+        }
+
+        function markReady() {
+          if (!mainReady) return;
+          loading.classList.add("is-done");
+          loading.setAttribute("aria-hidden", "true");
+        }
+
+        mainVideo.addEventListener("loadedmetadata", () => {
+          if (Number.isFinite(mainVideo.duration) && mainVideo.duration > 0) {
+            duration = mainVideo.duration;
+          }
+          mainVideo.pause();
+          mainReady = true;
+          setPageHeight();
+          calculateProgress();
+          markReady();
+
+          window.setTimeout(requestOutroVideo, 1500);
+        });
+
+        outroVideo.addEventListener("loadedmetadata", () => {
+          if (state !== "outro") outroVideo.pause();
+          else outroVideo.play().catch(() => {});
+        });
+
+        function enforceLoop(video, activeState) {
+          const restart = () => {
+            if (state !== activeState) return;
+            video.currentTime = 0;
+            video.play().catch(() => {});
+          };
+
+          video.addEventListener("timeupdate", () => {
+            if (
+              Number.isFinite(video.duration) &&
+              video.duration > 0 &&
+              video.currentTime >= video.duration - 0.2
+            ) {
+              restart();
+            }
+          });
+          video.addEventListener("ended", restart);
+        }
+
+        enforceLoop(introVideo, "intro");
+        enforceLoop(outroVideo, "outro");
+
+        introVideo.addEventListener("loadeddata", requestMainVideo, { once: true });
+
+        window.addEventListener("scroll", calculateProgress, { passive: true });
+        window.addEventListener("resize", () => {
+          setPageHeight();
+          calculateProgress();
+        });
+
+        window.addEventListener("pointermove", (event) => {
+          if (event.pointerType === "touch") return;
+          const x = event.clientX / window.innerWidth - 0.5;
+          const y = event.clientY / window.innerHeight - 0.5;
+          mouseTargetX = x * -24;
+          mouseTargetY = y * -16;
+        }, { passive: true });
+
+        document.addEventListener("pointerdown", () => {
+          if (state === "intro") introVideo.play().catch(() => {});
+          if (state === "outro") outroVideo.play().catch(() => {});
+        }, { once: true, passive: true });
+
+        [introVideo, mainVideo, outroVideo].forEach((video) => {
+          video.muted = true;
+          video.playsInline = true;
+
+          let fallbackUsed = false;
+          video.addEventListener("error", () => {
+            if (fallbackUsed || !video.dataset.fallback) return;
+            fallbackUsed = true;
+            video.src = video.dataset.fallback;
+            video.load();
+            if (
+              (video === introVideo && state === "intro") ||
+              (video === outroVideo && state === "outro")
+            ) {
+              video.play().catch(() => {});
+            }
+          });
+        });
+
+        setPageHeight();
+        calculateProgress();
+        syncLayers();
+        requestAnimationFrame(render);
+
+        if (introVideo.readyState >= 2) requestMainVideo();
+
+        window.setTimeout(() => {
+          if (mainReady) markReady();
+        }, 2500);
+      })();
+    </script>
+  </body>
+</html>
